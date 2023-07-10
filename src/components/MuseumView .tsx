@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Table, Form, Button, Image } from "react-bootstrap";
 import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface IMuseumArtwork {
   objectID: number;
   title: string;
@@ -20,7 +19,7 @@ interface IApiResponse {
 const MuseumView = () => {
   const [response, setResponse] = useState<IApiResponse | null>(null);
   const [field, setField] = useState("");
-  const [museumObjects, setMuseumObjects] = useState<IMuseumObject[]>([]);
+  const [museumObjects, setMuseumObjects] = useState<IMuseumArtwork[]>([]);
   const [loading, setLoading] = useState(false); // добавили состояние загрузки
   const [error, setError] = useState(""); /// добавили состояние ошибки
 
@@ -38,7 +37,7 @@ const MuseumView = () => {
       const objects = results
         .filter((result) => result.status === "fulfilled") // отфильтровали успешные результаты
         .map(
-          (result) => (result as PromiseFulfilledResult<IMuseumObject>).value
+          (result) => (result as PromiseFulfilledResult<IMuseumArtwork>).value
         ); // привели типы и получили массив объектов
       setMuseumObjects(objects); // сохраниили массив объектов
     } catch (err) {
