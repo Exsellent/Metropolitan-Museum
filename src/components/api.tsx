@@ -3,6 +3,8 @@ import axios from "axios";
 const API_BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
 
 interface IApiResponse {
+  status: string;
+  value: IMuseumArtwork;
   primaryImageSmall: string;
   artistDisplayName: string;
   culture: string;
@@ -10,7 +12,6 @@ interface IApiResponse {
   accessionYear: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface IMuseumArtwork {
   objectID: number;
   title: string;
