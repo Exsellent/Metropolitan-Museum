@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Form, Button, Image } from "react-bootstrap";
-import MuseumService from "./MuseumService";
+import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
 
 interface IMuseumArtwork {
   objectID: number;
@@ -17,56 +17,52 @@ interface IApiResponse {
 }
 
 const MuseumText = () => {
-  const [res, setRes] = useState<IApiResponse | null>(null);
-  const [field, setField] = useState("");
-  const [objects, setObjects] = useState<IMuseumArtwork[]>([]);
-
-  const museumService = useMemo(() => new MuseumService(), []);
-
-  const fetchObjects = useCallback(
-    async (keyword: string) => {
-      try {
-        const objectIDs = await museumService.getObjects(keyword);
-        const objectData = await Promise.all(
-          objectIDs.map((id) => museumService.getObjectInfo(id))
-        );
-        setObjects(objectData);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [museumService]
-  );
+  const [response, setResponse] = useState<IApiResponse | null>(null);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [museumObjects, setMuseumObjects] = useState<IMuseumArtwork[]>([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchObjects("cats");
-  }, [fetchObjects]);
-
-  const updateInfo = useCallback(
-    (info: string) => {
-      setRes(null);
-      museumService.getInfo(info).then(onInfoLoaded);
-    },
-    [museumService, onInfoLoaded]
-  );
-
-  const onInfoLoaded = useCallback((res: IApiResponse) => {
-    setRes(res);
-    setField("");
+    fetchMuseumObjectsByKeyword("cats");
   }, []);
 
-  const handleUserInput = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const name = e.target.value;
-      setField(name);
-      updateInfo(name);
-    },
-    [updateInfo]
-  );
+  // Вспомогательная функция для обработки ответа API и обновления состояния
+  const handleApiResponse = async (id: number) => {
+    try {
+      const museumInfo = await fetchMuseumInfo(id);
+      setResponse(museumInfo);
+      setSearchKeyword("");
+      setError("");
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
-  const submitUserInput = useCallback(() => {
-    updateInfo(field);
-  }, [updateInfo, field]);
+  // Функция для выборки музейных объектов по заданному ключевому слову и обновления состояния
+  const fetchMuseumObjectsByKeyword = async (keyword: string) => {
+    try {
+      const objectIDs = await fetchMuseumObjects(keyword);
+      const museumObjects = await Promise.all(
+        objectIDs.map((id) => fetchMuseumInfo(id))
+      );
+      setMuseumObjects(museumObjects);
+      setError("");
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  // Функция для обработки пользовательского ввода и обновления состояния
+  const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const keyword = e.target.value;
+    setSearchKeyword(keyword);
+    handleApiResponse(keyword);
+  };
+
+  // Функция для отправки пользовательского ввода и обновления состояния
+  const submitUserInput = () => {
+    handleApiResponse(searchKeyword);
+  };
 
   const {
     primaryImageSmall,
@@ -74,21 +70,23 @@ const MuseumText = () => {
     culture,
     period,
     accessionYear,
-  } = res || {};
+  } = response || {};
 
-  const objectList = objects.map(({ objectID, title, artistDisplayName }) => (
-    <li key={objectID}>
-      {title}: {artistDisplayName}
-    </li>
-  ));
+  const museumObjectList = museumObjects.map(
+    ({ objectID, title, artistDisplayName }) => (
+      <li key={objectID}>
+        {title}: {artistDisplayName}
+      </li>
+    )
+  );
 
   return (
     <>
       <Form onSubmit={submitUserInput}>
-        <Form.Label>Student Name:</Form.Label>
+        <Form.Label>Search Keyword:</Form.Label>
         <Form.Control
           type="text"
-          placeholder="Enter student name"
+          placeholder="Enter a keyword"
           onChange={handleUserInput}
         />
         <Button variant="primary" type="submit">
@@ -96,16 +94,18 @@ const MuseumText = () => {
         </Button>
       </Form>
 
-      {res && (
+      {error && <p>{error}</p>}
+
+      {response && (
         <div>
-          <Image src={primaryImageSmall} alt="Random Character" />
+          <Image src={primaryImageSmall} alt="Artwork" />
           <Table striped bordered hover variant="dark">
             <thead>
               <tr>
                 <th>Name:</th>
                 <th>Culture:</th>
                 <th>Period:</th>
-                <th>Year:</th>
+                <th>Accession Year:</th>
               </tr>
             </thead>
             <tbody>
@@ -120,7 +120,7 @@ const MuseumText = () => {
         </div>
       )}
 
-      <ul>{objectList}</ul>
+      <ul>{museumObjectList}</ul>
     </>
   );
 };

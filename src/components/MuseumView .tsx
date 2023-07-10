@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Table, Form, Button, Image } from "react-bootstrap";
-import axios from "axios";
-import MuseumService from "./MuseumService";
+import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
 
-interface IMuseumObject {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+interface IMuseumArtwork {
   objectID: number;
   title: string;
   artistDisplayName: string;
@@ -21,53 +21,47 @@ const MuseumView = () => {
   const [response, setResponse] = useState<IApiResponse | null>(null);
   const [field, setField] = useState("");
   const [museumObjects, setMuseumObjects] = useState<IMuseumObject[]>([]);
+  const [loading, setLoading] = useState(false); // добавили состояние загрузки
+  const [error, setError] = useState(""); /// добавили состояние ошибки
 
   useEffect(() => {
-    fetchMuseumObjects("cats");
+    fetchMuseumObjectsByKeyword("cats");
   }, []);
 
-  const fetchMuseumObjects = (keyword: string) => {
-    axios
-      .get(
-        `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${keyword}`
-      )
-      .then((response) => {
-        const objectIDs: number[] = response.data.objectIDs;
-        objectIDs.forEach((id) => {
-          axios
-            .get(
-              `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
-            )
-            .then((response) => {
-              setMuseumObjects((prevObjects) => [
-                ...prevObjects,
-                response.data,
-              ]);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+  const fetchMuseumObjectsByKeyword = async (keyword: string) => {
+    setLoading(true); // начали загрузку
+    setError(""); // сбросили ошибку
+    try {
+      const objectIDs = await fetchMuseumObjects(keyword); // получили массив id объектов
+      const promises = objectIDs.map((id) => fetchMuseumInfo(id)); //создали массив промисов для каждого объекта id
+      const results = await Promise.allSettled(promises); // получили результаты промиса
+      const objects = results
+        .filter((result) => result.status === "fulfilled") // отфильтровали успешные результаты
+        .map(
+          (result) => (result as PromiseFulfilledResult<IMuseumObject>).value
+        ); // привели типы и получили массив объектов
+      setMuseumObjects(objects); // сохраниили массив объектов
+    } catch (err) {
+      setError(err.message); // поймали ошибку и сохранили ее сообщение
+    } finally {
+      setLoading(false); // заканчили загрузку
+    }
   };
 
-  const museumService = useMemo(() => new MuseumService(), []);
-
-  const updateMuseumInfo = (info: string) => {
+  const updateMuseumInfo = async (info: string) => {
     // eslint-disable-next-line no-console
     console.log(info);
     setResponse(null);
-    museumService.getInfo(info).then(onMuseumInfoLoaded);
-  };
-
-  const onMuseumInfoLoaded = (response: IApiResponse) => {
-    setResponse(response);
-    setField("");
-    // eslint-disable-next-line no-console
-    console.log(response);
+    setLoading(true); // начали загрузку
+    setError(""); // сбросили ошибку
+    try {
+      const response = await fetchMuseumInfo(info); // получили ошибку от API
+      setResponse(response);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +107,9 @@ const MuseumView = () => {
           Submit
         </Button>
       </Form>
+
+      {loading && <p>Loading...</p>}
+      {error && <p>{error}</p>}
 
       {response && (
         <div>
