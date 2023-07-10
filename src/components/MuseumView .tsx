@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Table, Form, Button, Image } from "react-bootstrap";
 import axios from "axios";
-import WeatherService from "../WeatherService";
+import MuseumService from "./MuseumService";
 
-interface IObject {
+interface IMuseumObject {
   objectID: number;
   title: string;
   artistDisplayName: string;
@@ -17,16 +17,16 @@ interface IApiResponse {
   accessionYear: string;
 }
 
-const View = () => {
-  const [res, setRes] = useState<IApiResponse | null>(null);
+const MuseumView = () => {
+  const [response, setResponse] = useState<IApiResponse | null>(null);
   const [field, setField] = useState("");
-  const [objects, setObjects] = useState<IObject[]>([]);
+  const [museumObjects, setMuseumObjects] = useState<IMuseumObject[]>([]);
 
   useEffect(() => {
-    fetchObjects("cats");
+    fetchMuseumObjects("cats");
   }, []);
 
-  const fetchObjects = (keyword: string) => {
+  const fetchMuseumObjects = (keyword: string) => {
     axios
       .get(
         `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${keyword}`
@@ -39,7 +39,10 @@ const View = () => {
               `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
             )
             .then((response) => {
-              setObjects((prevObjects) => [...prevObjects, response.data]);
+              setMuseumObjects((prevObjects) => [
+                ...prevObjects,
+                response.data,
+              ]);
             })
             .catch((error) => {
               console.error(error);
@@ -51,22 +54,20 @@ const View = () => {
       });
   };
 
-  const weatherService = new WeatherService();
+  const museumService = useMemo(() => new MuseumService(), []);
 
-  const updateInfo = (info: string) => {
+  const updateMuseumInfo = (info: string) => {
     // eslint-disable-next-line no-console
     console.log(info);
-    setRes(null);
-    weatherService.getInfo(info).then(onInfoLoaded);
-    // eslint-disable-next-line no-console
-    console.log(res);
+    setResponse(null);
+    museumService.getInfo(info).then(onMuseumInfoLoaded);
   };
 
-  const onInfoLoaded = (res: IApiResponse) => {
-    setRes(res);
+  const onMuseumInfoLoaded = (response: IApiResponse) => {
+    setResponse(response);
     setField("");
     // eslint-disable-next-line no-console
-    console.log(res);
+    console.log(response);
   };
 
   const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,13 +75,13 @@ const View = () => {
     setField(name);
     // eslint-disable-next-line no-console
     console.log(name);
-    updateInfo(name);
+    updateMuseumInfo(name);
   };
 
   const submitUserInput = () => {
     // eslint-disable-next-line no-console
     console.log(field);
-    updateInfo(field);
+    updateMuseumInfo(field);
   };
 
   const {
@@ -89,21 +90,23 @@ const View = () => {
     culture,
     period,
     accessionYear,
-  } = res || {};
+  } = response || {};
 
-  const objectList = objects.map(({ objectID, title, artistDisplayName }) => (
-    <li key={objectID}>
-      {title}: {artistDisplayName}
-    </li>
-  ));
+  const museumObjectList = museumObjects.map(
+    ({ objectID, title, artistDisplayName }) => (
+      <li key={objectID}>
+        {title}: {artistDisplayName}
+      </li>
+    )
+  );
 
   return (
     <>
       <Form onSubmit={submitUserInput}>
-        <Form.Label>Student Name:</Form.Label>
+        <Form.Label>Search Keyword:</Form.Label>
         <Form.Control
           type="text"
-          placeholder="Enter student name"
+          placeholder="Enter a keyword"
           onChange={handleUserInput}
         />
         <Button variant="primary" type="submit">
@@ -111,16 +114,16 @@ const View = () => {
         </Button>
       </Form>
 
-      {res && (
+      {response && (
         <div>
-          <Image src={primaryImageSmall} alt="Random Character" />
+          <Image src={primaryImageSmall} alt="Artwork" />
           <Table striped bordered hover variant="dark">
             <thead>
               <tr>
                 <th>Name:</th>
                 <th>Culture:</th>
                 <th>Period:</th>
-                <th>Year:</th>
+                <th>Accession Year:</th>
               </tr>
             </thead>
             <tbody>
@@ -135,9 +138,9 @@ const View = () => {
         </div>
       )}
 
-      <ul>{objectList}</ul>
+      <ul>{museumObjectList}</ul>
     </>
   );
 };
 
-export default View;
+export default MuseumView;

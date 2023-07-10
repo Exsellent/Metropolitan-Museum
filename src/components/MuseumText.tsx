@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Table, Form, Button, Image } from "react-bootstrap";
-import axios from "axios";
-import WeatherService from "./WeatherService";
+import MuseumService from "./MuseumService";
 
-interface IObject {
+interface IMuseumArtwork {
   objectID: number;
   title: string;
   artistDisplayName: string;
@@ -17,71 +16,57 @@ interface IApiResponse {
   accessionYear: string;
 }
 
-const WeatherText = () => {
+const MuseumText = () => {
   const [res, setRes] = useState<IApiResponse | null>(null);
   const [field, setField] = useState("");
-  const [objects, setObjects] = useState<IObject[]>([]);
+  const [objects, setObjects] = useState<IMuseumArtwork[]>([]);
+
+  const museumService = useMemo(() => new MuseumService(), []);
+
+  const fetchObjects = useCallback(
+    async (keyword: string) => {
+      try {
+        const objectIDs = await museumService.getObjects(keyword);
+        const objectData = await Promise.all(
+          objectIDs.map((id) => museumService.getObjectInfo(id))
+        );
+        setObjects(objectData);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [museumService]
+  );
 
   useEffect(() => {
     fetchObjects("cats");
-  }, []);
+  }, [fetchObjects]);
 
-  const fetchObjects = (keyword: string) => {
-    axios
-      .get(
-        `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${keyword}`
-      )
-      .then((response) => {
-        const objectIDs: number[] = response.data.objectIDs;
-        objectIDs.forEach((id) => {
-          axios
-            .get(
-              `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
-            )
-            .then((response) => {
-              setObjects((prevObjects) => [...prevObjects, response.data]);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        });
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  const updateInfo = useCallback(
+    (info: string) => {
+      setRes(null);
+      museumService.getInfo(info).then(onInfoLoaded);
+    },
+    [museumService, onInfoLoaded]
+  );
 
-  const weatherService = new WeatherService();
-
-  const updateInfo = (info: string) => {
-    // eslint-disable-next-line no-console
-    console.log(info);
-    setRes(null);
-    weatherService.getInfo(info).then(onInfoLoaded);
-    // eslint-disable-next-line no-console
-    console.log(res);
-  };
-
-  const onInfoLoaded = (res: IApiResponse) => {
+  const onInfoLoaded = useCallback((res: IApiResponse) => {
     setRes(res);
     setField("");
-    // eslint-disable-next-line no-console
-    console.log(res);
-  };
+  }, []);
 
-  const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setField(name);
-    // eslint-disable-next-line no-console
-    console.log(name);
-    updateInfo(name);
-  };
+  const handleUserInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const name = e.target.value;
+      setField(name);
+      updateInfo(name);
+    },
+    [updateInfo]
+  );
 
-  const submitUserInput = () => {
-    // eslint-disable-next-line no-console
-    console.log(field);
+  const submitUserInput = useCallback(() => {
     updateInfo(field);
-  };
+  }, [updateInfo, field]);
 
   const {
     primaryImageSmall,
@@ -140,4 +125,4 @@ const WeatherText = () => {
   );
 };
 
-export default WeatherText;
+export default MuseumText;

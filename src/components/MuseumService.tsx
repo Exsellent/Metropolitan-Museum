@@ -14,7 +14,7 @@ interface IWeatherInfo {
   accessionYear: string;
 }
 
-class WeatherService {
+class MuseumService {
   getInfo = async (info = "4567"): Promise<IWeatherInfo> => {
     const url = `https://collectionapi.metmuseum.org/public/collection/v1/objects/${info}`;
     const res = await fetch(url);
@@ -36,4 +36,4 @@ class WeatherService {
   };
 }
 
-export default WeatherService;
+export default MuseumService;
