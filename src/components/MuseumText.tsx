@@ -16,16 +16,15 @@ interface IApiResponse {
   accessionYear: string;
 }
 
-const MuseumText = () => {
+const MuseumText: React.FC = () => {
   const [response, setResponse] = useState<IApiResponse | null>(null);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [museumObjects, setMuseumObjects] = useState<IMuseumArtwork[]>([]);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     fetchMuseumObjectsByKeyword("cats");
   }, []);
-
   // Вспомогательная функция для обработки ответа API и обновления состояния
   const handleApiResponse = async (id: number) => {
     try {
@@ -34,10 +33,9 @@ const MuseumText = () => {
       setSearchKeyword("");
       setError("");
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
-
   // Функция для выборки музейных объектов по заданному ключевому слову и обновления состояния
   const fetchMuseumObjectsByKeyword = async (keyword: string) => {
     try {
@@ -45,23 +43,21 @@ const MuseumText = () => {
       const museumObjects = await Promise.all(
         objectIDs.map((id) => fetchMuseumInfo(id))
       );
-      setMuseumObjects(museumObjects);
+      setMuseumObjects(museumObjects as unknown as IMuseumArtwork[]);
       setError("");
     } catch (error) {
-      setError(error.message);
+      setError((error as Error).message);
     }
   };
-
   // Функция для обработки пользовательского ввода и обновления состояния
   const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     setSearchKeyword(keyword);
-    handleApiResponse(keyword);
+    handleApiResponse(parseInt(keyword, 10));
   };
-
   // Функция для отправки пользовательского ввода и обновления состояния
   const submitUserInput = () => {
-    handleApiResponse(searchKeyword);
+    handleApiResponse(parseInt(searchKeyword, 10));
   };
 
   const {
