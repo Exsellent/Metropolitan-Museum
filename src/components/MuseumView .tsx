@@ -19,70 +19,67 @@ interface IApiResponse {
 }
 
 // Компонент для отображения музейных объектов
-const MuseumView = () => {
-  const [response, setResponse] = useState<IApiResponse | null>(null); // состояние для хранения ответа API по выбранному объекту
-  const [field, setField] = useState(""); // состояние для хранения значения поля ввода
-  const [museumObjects, setMuseumObjects] = useState<IMuseumArtwork[]>([]); // состояние для хранения массива музейных объектов по заданному ключевому слову
-  const [loading, setLoading] = useState(false); // состояние для индикации загрузки данных
-  const [error, setError] = useState(""); // состояние для хранения сообщения об ошибке
+const MuseumView: React.FC = () => {
+  const [response, setResponse] = useState<IApiResponse | null>(null);
+  const [field, setField] = useState<string>("");
+  const [museumObjects, setMuseumObjects] = useState<IMuseumArtwork[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    fetchMuseumObjectsByKeyword("cats"); // при монтировании компонента запрашиваем музейные объекты по ключевому слову "cats"
+    fetchMuseumObjectsByKeyword("cats");
   }, []);
 
-  // Функция для получения музейных объектов по заданному ключевому слову и обновления состояния
   const fetchMuseumObjectsByKeyword = async (keyword: string) => {
-    setLoading(true); // начинаем загрузку данных
-    setError(""); // сбрасываем ошибку
+    setLoading(true);
+    setError("");
     try {
-      const objectIDs = await fetchMuseumObjects(keyword); // получаем массив id объектов по ключевому слову с помощью функции из файла api.tsx
-      const promises = objectIDs.map((id) => fetchMuseumInfo(id)); // создаем массив промисов для каждого id с помощью функции из файла api.tsx
-      const results = await Promise.all(promises); // дожидаемся выполнения всех промисов и получаем массив результатов типа IApiResponse[]
+      const objectIDs = await fetchMuseumObjects(keyword);
+      const promises = objectIDs.map((id) => fetchMuseumInfo(id));
+      const results = await Promise.all(promises);
       const objects = results.map(
         (result) => result as unknown as IMuseumArtwork
-      ); // приводим типы результатов к типу IMuseumArtwork[]
-      setMuseumObjects(objects); // сохраняем массив объектов в состояние
-    } catch (err: Error) {
-      // ловим возможную ошибку и сохраняем ее сообщение в состояние
-      setError(err.message);
+      );
+      setMuseumObjects(objects);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     } finally {
-      // в любом случае завершаем загрузку данных
       setLoading(false);
     }
   };
 
-  // Функция для получения информации о выбранном музейном объекте по его id и обновления состояния
   const updateMuseumInfo = async (info: string) => {
-    // eslint-disable-next-line no-console
-    console.log(info); // выводим в консоль значение аргумента info (id объекта)
-    setResponse(null); // сбрасываем предыдущий ответ API
-    setLoading(true); // начинаем загрузку данных
-    setError(""); // сбрасываем ошибку
+    setResponse(null);
+    setLoading(true);
+    setError("");
     try {
-      const response = await fetchMuseumInfo(+info); // получаем информацию об объекте по его id с помощью функции из файла api.tsx (преобразуем строку в число)
-      setResponse(response); // сохраняем ответ API в состояние
-    } catch (err: Error) {
-      // ловим возможную ошибку и сохраняем ее сообщение в состояние
-      setError(err.message);
+      const response = await fetchMuseumInfo(+info);
+      setResponse(response);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     } finally {
-      // в любом случае завершаем загрузку данных
       setLoading(false);
     }
   };
 
-  // Функция для обработки пользовательского ввода и обновления состояния
   const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value; // получаем значение из поля ввода
-    setField(name); // сохраняем его в состояние
-    updateMuseumInfo(name); // запрашиваем информацию об объекте по его id
+    const name = e.target.value;
+    setField(name);
+    updateMuseumInfo(name);
   };
 
-  // Функция для отправки пользовательского ввода и обновления состояния
   const submitUserInput = () => {
-    updateMuseumInfo(field); // запрашиваем информацию об объекте по его id, который хранится в состоянии
+    updateMuseumInfo(field);
   };
 
-  // Деструктурируем свойства из ответа API или пустого объекта, если ответа нет
   const {
     primaryImageSmall,
     artistDisplayName,
@@ -91,7 +88,6 @@ const MuseumView = () => {
     accessionYear,
   } = response || {};
 
-  // Создаем список музейных объектов из массива, который хранится в состоянии
   const museumObjectList = museumObjects.map(
     ({ objectID, title, artistDisplayName }) => (
       <li key={objectID}>
@@ -100,31 +96,31 @@ const MuseumView = () => {
     )
   );
 
-  // Возвращаем JSX-разметку для отображения компонента
   return (
     <>
       <Form onSubmit={submitUserInput}>
-        <Form.Label>Search Keyword:</Form.Label>
+        <Form.Label>Поиск по ключевому слову:</Form.Label>
         <Form.Control
           type="text"
-          placeholder="Enter a keyword"
+          placeholder="Введите ключевое слово"
           onChange={handleUserInput}
         />
         <Button variant="primary" type="submit">
           Submit
         </Button>
       </Form>
-      {loading && <p>Loading...</p>} /{error && <p>{error}</p>}
-      {response && ( // показываем информацию о выбранном объекте, если ответ API есть
+      {loading && <p>Загрузка...</p>}
+      {error && <p>{error}</p>}
+      {response && (
         <div>
-          <Image src={primaryImageSmall} alt="Artwork" />
+          <Image src={primaryImageSmall} alt="Произведение искусства" />
           <Table striped bordered hover variant="dark">
             <thead>
               <tr>
-                <th>Name:</th>
-                <th>Culture:</th>
-                <th>Period:</th>
-                <th>Accession Year:</th>
+                <th>Имя:</th>
+                <th>Культура:</th>
+                <th>Период:</th>
+                <th>Год поступления:</th>
               </tr>
             </thead>
             <tbody>
