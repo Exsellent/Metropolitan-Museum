@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "redux/reduxToolkitImports";
 
 interface IFavorite {
   id: string;

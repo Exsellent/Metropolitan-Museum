@@ -1,9 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "redux/reduxToolkitImports";
 
 interface IExhibition {
   id: string;
-  // eslint-disable-next-line prettier/prettier
-  }
+  title: string;
+  description: string;
+  image: string;
+  date: string;
+}
 
 type ExhibitionsState = IExhibition[];
 

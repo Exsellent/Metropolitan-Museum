@@ -1,41 +1,30 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "redux/reduxToolkitImports";
 
-interface IArtwork {
-  id: string;
+interface IUser {
+  id: number;
+  name: string;
+  email: string;
 }
 
-type ArtworksState = IArtwork[];
+interface IAuthState {
+  loggedIn: boolean;
+  user: IUser | null;
+}
 
-const artworksSlice = createSlice({
-  name: "artworks",
-  initialState: [] as ArtworksState,
+const authSlice = createSlice({
+  name: "auth",
+  initialState: { loggedIn: false, user: null } as IAuthState,
   reducers: {
-    setArtworks: (state, action: PayloadAction<ArtworksState>) => {
-      return action.payload;
+    login: (state, action: PayloadAction<IUser>) => {
+      state.loggedIn = true;
+      state.user = action.payload;
     },
-    addArtwork: (state, action: PayloadAction<IArtwork>) => {
-      state.push(action.payload);
-    },
-    updateArtwork: (
-      state,
-      action: PayloadAction<Partial<IArtwork> & { id: string }>
-    ) => {
-      const { id, ...updatedFields } = action.payload;
-      const existingArtwork = state.find((artwork) => artwork.id === id);
-      if (existingArtwork) {
-        Object.assign(existingArtwork, updatedFields);
-      }
-    },
-    deleteArtwork: (state, action: PayloadAction<string>) => {
-      const id = action.payload;
-      const index = state.findIndex((artwork) => artwork.id === id);
-      if (index !== -1) {
-        state.splice(index, 1);
-      }
+    logout: (state) => {
+      state.loggedIn = false;
+      state.user = null;
     },
   },
 });
 
-export const { setArtworks, addArtwork, updateArtwork, deleteArtwork } =
-  artworksSlice.actions;
-export default artworksSlice.reducer;
+export const { login, logout } = authSlice.actions;
+export default authSlice.reducer;
