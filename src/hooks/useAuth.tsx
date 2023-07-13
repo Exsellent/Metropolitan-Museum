@@ -1,4 +1,11 @@
-import React, { createContext, useContext, ReactNode, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import axios from "axios";
 
 export interface IAuthContext {
@@ -25,43 +32,58 @@ interface IAuthProviderProps {
 export const AuthProvider = ({ children }: IAuthProviderProps) => {
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const handleLogin = async (/*username: string, password: string*/) => {
-    try {
-      const response = await axios.post("/api/login", {
-        /*username,*/
-        /*password*/
-      });
+  // Обертка функции входа в систему handle в useCallback
+  const handleLogin = useCallback(
+    async (/*username: string, password: string*/) => {
+      try {
+        const response = await axios.post("/api/login", {
+          /*username,*/
+          /*password*/
+        });
 
-      if (response.data.success) {
-        setLoggedIn(true);
-      } else {
-        throw new Error("Invalid username or password");
+        if (response.data.success) {
+          setLoggedIn(true);
+        } else {
+          throw new Error("Invalid username or password");
+        }
+      } catch (error) {
+        console.error(error);
+        throw error;
       }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+    },
+    [setLoggedIn]
+  );
 
-  const handleLogout = () => {
+  // Обертка функции дескриптора выхода из системы и регистрации дескриптора в use Callback hooks
+  const handleLogout = useCallback(() => {
     setLoggedIn(false);
-  };
+  }, [setLoggedIn]); // Add setLoggedIn as a dependency
 
-  const handleRegistration = async (/*username: string, password: string*/) => {
-    try {
-      // Handle registration logic using the username and password parameters
-      setLoggedIn(true);
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  };
+  const handleRegistration = useCallback(
+    async (/*username: string, password: string*/) => {
+      try {
+        // Обрабатывается логика регистрации, используя параметры имени пользователя и пароля
+        setLoggedIn(true);
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    [setLoggedIn]
+  );
+
+  const value = useMemo(
+    () => ({
+      loggedIn,
+      handleLogin,
+      handleLogout,
+      handleRegistration,
+    }),
+    [loggedIn, handleLogin, handleLogout, handleRegistration]
+  );
 
   return (
-    <AuthContext.Provider
-      value={{ loggedIn, handleLogin, handleLogout, handleRegistration }}
-    >
-      {children}
-    </AuthContext.Provider>
+    // Передается сохраненный объект в качестве значения для поставщика контекста
+    <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   );
 };

@@ -1,17 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// eslint-disable @typescript-eslint/no-unused-vars /
 import React from "react";
-import {
-  Formik,
-  Form,
-  Field,
-  ErrorMessage,
-  FieldArray,
-  FastField,
-} from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Provider } from "react-redux";
 import store from "redux/store";
-import { AuthProvider, useAuth, IAuthContext } from "hooks/useAuth";
+import { AuthProvider, useAuth } from "hooks/useAuth";
 import ApiContext from "ApiContext/ApiContext";
 import ErrorBoundary from "ErrorBoundary/ErrorBoundary";
 import MuseumView from "components/MuseumView";
@@ -49,6 +42,8 @@ interface IUserData {
   artworks: IArtwork[];
   exhibitions: IExhibition[];
   favorites: IFavorite[];
+  addArtwork: (artwork: IArtwork) => void;
+  removeArtwork: (id: number) => void;
 }
 
 const userData: IUserData = {
@@ -57,11 +52,18 @@ const userData: IUserData = {
   artworks: [],
   exhibitions: [],
   favorites: [],
+  addArtwork: (artwork: IArtwork) => {
+    userData.artworks.push(artwork);
+  },
+  removeArtwork: (id: number) => {
+    userData.artworks = userData.artworks.filter(
+      (art) => art.id !== id.toString()
+    );
+  },
 };
 
 const App: React.FC = () => {
-  const { loggedIn, handleLogin, handleLogout, handleRegistration } =
-    useAuth() as IAuthContext;
+  const { loggedIn, handleLogin, handleLogout, handleRegistration } = useAuth();
 
   const handleLoginSubmit = async (values: IFormValues) => {
     const { username, password } = values;
