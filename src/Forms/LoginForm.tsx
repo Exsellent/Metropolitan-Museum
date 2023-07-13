@@ -14,11 +14,6 @@ const LoginForm: React.FC<ILoginFormProps> = ({
   validationSchema,
   handleLogin,
 }) => {
-  const initialValues = {
-    username: "",
-    password: "",
-  };
-
   const handleSubmit = async (values: {
     username: string;
     password: string;
@@ -32,7 +27,7 @@ const LoginForm: React.FC<ILoginFormProps> = ({
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={{ username: "", password: "" }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >

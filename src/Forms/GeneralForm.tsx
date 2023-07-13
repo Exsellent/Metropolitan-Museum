@@ -1,6 +1,5 @@
 import React from "react";
 import { Formik, Form, ErrorMessage, FieldArray, FastField } from "formik";
-
 import * as Yup from "yup";
 
 interface IFormValues {
@@ -38,35 +37,31 @@ const GeneralForm: React.FC<IFormProps> = ({
         <Form>
           <h1>{title}</h1>
           <FieldArray name="fields">
-            {({ push, remove }) => (
+            {({ remove }) => (
               <div>
-                {values.fields.map((field, index) => (
-                  <div key={index}>
-                    <label htmlFor={`fields.${index}.name`}>{field.name}</label>
-                    <FastField
-                      type={field.type}
-                      id={`fields.${index}.name`}
-                      name={`fields.${index}.name`}
-                    />
-                    <ErrorMessage
-                      name={`fields.${index}.name`}
-                      component="div"
-                    />
-                    <button type="button" onClick={() => remove(index)}>
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => push({ name: "", type: "text", value: "" })}
-                >
-                  Add field
-                </button>
+                {values.fields &&
+                  values.fields.map((field, index) => (
+                    <div key={index}>
+                      <label htmlFor={`fields.${index}.name`}>
+                        {field.name}
+                      </label>
+                      <FastField
+                        type={field.type}
+                        id={`fields.${index}.name`}
+                        name={`fields.${index}.name`}
+                      />
+                      <ErrorMessage
+                        name={`fields.${index}.name`}
+                        component="div"
+                      />
+                      <button type="button" onClick={() => remove(index)}>
+                        Remove
+                      </button>
+                    </div>
+                  ))}
               </div>
             )}
           </FieldArray>
-
           <button type="submit">{button}</button>
         </Form>
       )}
