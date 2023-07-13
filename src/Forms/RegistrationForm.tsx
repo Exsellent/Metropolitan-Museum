@@ -12,16 +12,7 @@ interface IRegistrationFormProps {
 const RegistrationForm: React.FC<IRegistrationFormProps> = ({
   validationSchema,
 }) => {
-  const initialValues = {
-    username: "",
-    password: "",
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSubmit = async (values: {
-    username: string;
-    password: string;
-  }) => {
+  const handleSubmit = async () => {
     try {
       // Handle registration logic
     } catch (error) {
@@ -31,7 +22,7 @@ const RegistrationForm: React.FC<IRegistrationFormProps> = ({
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={{ username: "", password: "" }}
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >

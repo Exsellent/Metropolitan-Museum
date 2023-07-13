@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "redux/reduxToolkitImports";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface IExhibition {
+export interface IExhibition {
   id: string;
   title: string;
   description: string;
@@ -48,4 +48,5 @@ export const {
   updateExhibition,
   deleteExhibition,
 } = exhibitionsSlice.actions;
+export const selectExhibitions = (state) => state.favorites;
 export default exhibitionsSlice.reducer;

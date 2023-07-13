@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from "redux/reduxToolkitImports";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface IFavorite {
+export interface IFavorite {
   id: string;
 }
 
@@ -24,4 +24,5 @@ const favoritesSlice = createSlice({
 });
 
 export const { addFavorite, removeFavorite } = favoritesSlice.actions;
+export const selectFavorites = (state) => state.favorites;
 export default favoritesSlice.reducer;
