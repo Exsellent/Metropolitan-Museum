@@ -1,0 +1,7 @@
+/* Keyword Search*/
+.keyword-search {
+flex: 1;
+margin-top: 20px;
+margin-left: 20px; 
+align-items: flex-start;
+}

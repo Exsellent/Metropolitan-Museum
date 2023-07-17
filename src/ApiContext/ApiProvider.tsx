@@ -1,17 +1,17 @@
 import React, { ReactNode, useMemo, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectArtworks } from "features/artworksSlice";
 import { selectExhibitions } from "features/exhibitionsSlice";
 import { selectFavorites } from "features/favoritesSlice";
 import ApiContext from "./ApiContext";
 import { IArtwork } from "features/types";
+import { RootState } from "../redux/store";
 
 interface IApiProviderProps {
   children: ReactNode;
 }
 
 const ApiProvider: React.FC<IApiProviderProps> = ({ children }) => {
-  const artworks = useSelector(selectArtworks);
+  const artworks = useSelector((state: RootState) => state.artworks);
   const exhibitions = useSelector(selectExhibitions);
   const favorites = useSelector(selectFavorites);
   const dispatch = useDispatch();

@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface IArtwork {
   id: string;
-  // other properties
+  name: string;
+  email: string;
 }
 
 type ArtworksState = IArtwork[];
@@ -39,5 +40,5 @@ const artworksSlice = createSlice({
 
 export const { setArtworks, addArtwork, updateArtwork, deleteArtwork } =
   artworksSlice.actions;
-export const selectArtworks = (state) => state.favorites;
+
 export default artworksSlice.reducer;

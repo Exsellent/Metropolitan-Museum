@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import loggerMiddleware from 'middleware/loggerMiddleware'
 
 import artworksReducer from 'features/artworksSlice';
@@ -8,7 +8,19 @@ import exhibitionsReducer from 'features/exhibitionsSlice';
 import favoritesReducer from 'features/favoritesSlice';
 import searchReducer from 'features/searchSlice';
 
+export type RootState = ReturnType<typeof rootReducer>;
 
+const rootReducer = combineReducers({
+  auth: authReducer,
+  
+ 
+artworks: artworksReducer,
+  exhibitions: exhibitionsReducer,
+  
+ 
+favorites: favoritesReducer,
+  search: searchReducer,
+});
 
 const store = configureStore({
 reducer: {
@@ -28,4 +40,4 @@ return [...defaultMiddleware, ...customMiddleware]
 }
 })
 
-export default store
+export default store;

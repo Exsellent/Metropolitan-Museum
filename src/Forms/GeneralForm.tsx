@@ -1,11 +1,17 @@
 import React from "react";
 import { Formik, Form, ErrorMessage, FieldArray, FastField } from "formik";
 import * as Yup from "yup";
+interface IFormField {
+  name: string;
+  type: string;
+  value: string;
+  username: string;
+}
 
-interface IFormValues {
+export interface IFormValues {
   username: string;
   password: string;
-  fields: { name: string; type: string; value: string }[];
+  fields: IFormField[];
 }
 
 interface IFormProps {
@@ -42,16 +48,16 @@ const GeneralForm: React.FC<IFormProps> = ({
                 {values.fields &&
                   values.fields.map((field, index) => (
                     <div key={index}>
-                      <label htmlFor={`fields.${index}.name`}>
-                        {field.name}
+                      <label htmlFor={`fields.${index}.username`}>
+                        {field.username}
                       </label>
                       <FastField
                         type={field.type}
-                        id={`fields.${index}.name`}
-                        name={`fields.${index}.name`}
+                        id={`fields.${index}.username`}
+                        name={`fields.${index}.username`}
                       />
                       <ErrorMessage
-                        name={`fields.${index}.name`}
+                        name={`fields.${index}.username`}
                         component="div"
                       />
                       <button type="button" onClick={() => remove(index)}>
@@ -62,6 +68,7 @@ const GeneralForm: React.FC<IFormProps> = ({
               </div>
             )}
           </FieldArray>
+
           <button type="submit">{button}</button>
         </Form>
       )}

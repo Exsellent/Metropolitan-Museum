@@ -1,46 +1,48 @@
-import React, { useState, useEffect } from "react";
-import { Table, Form, Button, Image } from "react-bootstrap";
-import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
+import React, { useState, useEffect, useContext, useCallback } from "react";
+import { Form, Button, Image, Table } from "react-bootstrap";
+import { useAuth } from "../hooks/useAuth";
+import ApiContext from "../ApiContext/ApiContext";
+import { IArtwork } from "features/types";
+import { IApiResponse, fetchMuseumObjects, fetchMuseumInfo } from "./api";
+import "./museum-view.css";
 
-// Интерфейс для музейного объекта
-interface IMuseumArtwork {
-  objectID: number; // уникальный идентификатор объекта
-  title: string; // название объекта
-  artistDisplayName: string; // имя художника
-}
-
-// Интерфейс для ответа API
-interface IApiResponse {
-  primaryImageSmall: string; // ссылка на изображение объекта
-  artistDisplayName: string; // имя художника
-  culture: string; // культура, к которой относится объект
-  period: string; // период, в котором был создан объект
-  accessionYear: string; // год поступления объекта в музей
-}
-
-// Компонент для отображения музейных объектов
 const MuseumView: React.FC = () => {
+  const { loggedIn } = useAuth();
+  const apiContext = useContext(ApiContext);
   const [response, setResponse] = useState<IApiResponse | null>(null);
-  const [field, setField] = useState<string>("");
-  const [museumObjects, setMuseumObjects] = useState<IMuseumArtwork[]>([]);
+  const [museumObjects, setMuseumObjects] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
-  useEffect(() => {
-    fetchMuseumObjectsByKeyword("cats");
-  }, []);
-
-  const fetchMuseumObjectsByKeyword = async (keyword: string) => {
+  const fetchMuseumObjectsList = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
+      const keyword = "cats"; // Replace with user input or any keyword you want to use
       const objectIDs = await fetchMuseumObjects(keyword);
-      const promises = objectIDs.map((id) => fetchMuseumInfo(id));
-      const results = await Promise.all(promises);
-      const objects = results.map(
-        (result) => result as unknown as IMuseumArtwork
-      );
-      setMuseumObjects(objects);
+      setMuseumObjects(objectIDs);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchMuseumObjectsList();
+  }, [fetchMuseumObjectsList]);
+
+  const handleUserInput = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const keyword = "cats"; // Replace with user input or any keyword you want to use
+      const objectIDs = await fetchMuseumObjects(keyword);
+      setMuseumObjects(objectIDs);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
@@ -52,13 +54,16 @@ const MuseumView: React.FC = () => {
     }
   };
 
-  const updateMuseumInfo = async (info: string) => {
+  const updateMuseumInfo = async () => {
     setResponse(null);
     setLoading(true);
     setError("");
     try {
-      const response = await fetchMuseumInfo(+info);
-      setResponse(response);
+      const [firstObjectID] = museumObjects;
+      if (firstObjectID) {
+        const museumInfo = await fetchMuseumInfo(firstObjectID);
+        setResponse(museumInfo);
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
@@ -70,71 +75,61 @@ const MuseumView: React.FC = () => {
     }
   };
 
-  const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.value;
-    setField(name);
-    updateMuseumInfo(name);
+  const handleAddArtwork = () => {
+    if (loggedIn && apiContext) {
+      const artwork: IArtwork = {
+        id: "1",
+        email: "example@example.com",
+        name: "",
+      };
+      apiContext.addArtwork(artwork);
+    }
   };
 
-  const submitUserInput = () => {
-    updateMuseumInfo(field);
-  };
-
-  const {
-    primaryImageSmall,
-    artistDisplayName,
-    culture,
-    period,
-    accessionYear,
-  } = response || {};
-
-  const museumObjectList = museumObjects.map(
-    ({ objectID, title, artistDisplayName }) => (
-      <li key={objectID}>
-        {title}: {artistDisplayName}
-      </li>
-    )
-  );
+  const museumObjectList = museumObjects.map((objectID) => (
+    <li key={objectID}>{objectID}</li>
+  ));
 
   return (
     <>
-      <Form onSubmit={submitUserInput}>
-        <Form.Label>Поиск по ключевому слову:</Form.Label>
+      <Form>
+        <Form.Label>Keyword Search:</Form.Label>
         <Form.Control
           type="text"
-          placeholder="Введите ключевое слово"
+          placeholder="Enter a keyword"
           onChange={handleUserInput}
         />
-        <Button variant="primary" type="submit">
+        <Button variant="primary" onClick={updateMuseumInfo}>
           Submit
         </Button>
       </Form>
-      {loading && <p>Загрузка...</p>}
+      {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
       {response && (
         <div>
-          <Image src={primaryImageSmall} alt="Произведение искусства" />
+          <Image src={response.primaryImageSmall} alt="Artwork" />
           <Table striped bordered hover variant="dark">
             <thead>
               <tr>
-                <th>Имя:</th>
-                <th>Культура:</th>
-                <th>Период:</th>
-                <th>Год поступления:</th>
+                <th>Name:</th>
+                <th>Culture:</th>
+                <th>Period:</th>
+                <th>Accession Year:</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>{artistDisplayName}</td>
-                <td>{culture}</td>
-                <td>{period}</td>
-                <td>{accessionYear}</td>
+                <td>{response.artistDisplayName}</td>
+                <td>{response.culture}</td>
+                <td>{response.period}</td>
+                <td>{response.accessionYear}</td>
               </tr>
             </tbody>
           </Table>
         </div>
       )}
       <ul>{museumObjectList}</ul>
+      <Button onClick={handleAddArtwork}>Add Artwork</Button>
     </>
   );
 };

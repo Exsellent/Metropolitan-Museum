@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Table, Form, Button, Image } from "react-bootstrap";
-import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
+import { fetchMuseumInfo, fetchMuseumObjects } from "./api";
 
 interface IMuseumArtwork {
   objectID: number;
@@ -25,7 +25,7 @@ const MuseumText: React.FC = () => {
   useEffect(() => {
     fetchMuseumObjectsByKeyword("cats");
   }, []);
-  // Вспомогательная функция для обработки ответа API и обновления состояния
+
   const handleApiResponse = async (id: number) => {
     try {
       const museumInfo = await fetchMuseumInfo(id);
@@ -36,7 +36,7 @@ const MuseumText: React.FC = () => {
       setError((error as Error).message);
     }
   };
-  // Функция для выборки музейных объектов по заданному ключевому слову и обновления состояния
+
   const fetchMuseumObjectsByKeyword = async (keyword: string) => {
     try {
       const objectIDs = await fetchMuseumObjects(keyword);
@@ -49,13 +49,13 @@ const MuseumText: React.FC = () => {
       setError((error as Error).message);
     }
   };
-  // Функция для обработки пользовательского ввода и обновления состояния
+
   const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     setSearchKeyword(keyword);
     handleApiResponse(parseInt(keyword, 10));
   };
-  // Функция для отправки пользовательского ввода и обновления состояния
+
   const submitUserInput = () => {
     handleApiResponse(parseInt(searchKeyword, 10));
   };

@@ -48,5 +48,5 @@ export const {
   updateExhibition,
   deleteExhibition,
 } = exhibitionsSlice.actions;
-export const selectExhibitions = (state) => state.favorites;
+export const selectExhibitions = (state) => state.exhibitions; // Correct the selector to select data from the 'exhibitions' state
 export default exhibitionsSlice.reducer;
