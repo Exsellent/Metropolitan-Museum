@@ -2,9 +2,8 @@ import axios from "axios";
 
 const API_BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
 
-interface IApiResponse {
-  status: string;
-  value: IMuseumArtwork;
+export interface IApiResponse {
+  objectIDs: number[];
   primaryImageSmall: string;
   artistDisplayName: string;
   culture: string;
@@ -12,15 +11,19 @@ interface IApiResponse {
   accessionYear: string;
 }
 
-interface IMuseumArtwork {
-  objectID: number;
-  title: string;
-  artistDisplayName: string;
-}
+// interface IMuseumArtwork {
+//   objectID: number;
+//   title: string;
+//   artistDisplayName: string;
+// }
 
-export const fetchMuseumObjects = async (keyword: string) => {
+export const fetchMuseumObjects = async (
+  keyword: string
+): Promise<number[]> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/search?q=${keyword}`);
+    const response = await axios.get<IApiResponse>(
+      `${API_BASE_URL}/search?q=${keyword}`
+    );
     const objectIDs: number[] = response.data.objectIDs;
     return objectIDs;
   } catch (error) {
@@ -30,7 +33,9 @@ export const fetchMuseumObjects = async (keyword: string) => {
 
 export const fetchMuseumInfo = async (id: number): Promise<IApiResponse> => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/objects/${id}`);
+    const response = await axios.get<IApiResponse>(
+      `${API_BASE_URL}/objects/${id}`
+    );
     const museumInfo: IApiResponse = response.data;
     return museumInfo;
   } catch (error) {

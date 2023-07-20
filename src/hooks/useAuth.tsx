@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: IAuthProviderProps) => {
   // Обертка функции дескриптора выхода из системы и регистрации дескриптора в use Callback hooks
   const handleLogout = useCallback(() => {
     setLoggedIn(false);
-  }, [setLoggedIn]); // Add setLoggedIn as a dependency
+  }, [setLoggedIn]);
 
   const handleRegistration = useCallback(
     async (/*username: string, password: string*/) => {

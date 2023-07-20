@@ -1,5 +1,5 @@
-// eslint-disable @typescript-eslint/no-unused-vars /
 import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Provider } from "react-redux";
@@ -8,9 +8,17 @@ import { AuthProvider, useAuth } from "hooks/useAuth";
 import ApiContext from "ApiContext/ApiContext";
 import ErrorBoundary from "ErrorBoundary/ErrorBoundary";
 import MuseumView from "components/MuseumView";
+import FavoritesPage from "components/FavoritesPage";
+import SearchPage from "components/SearchPage";
+import LoginPage from "components/LoginPage";
+import NotFoundPage from "components/NotFoundPage";
 import { IArtwork } from "features/artworksSlice";
 import { IExhibition } from "features/exhibitionsSlice";
 import { IFavorite } from "features/favoritesSlice";
+
+import museumImage from "./assets/museum-image.jpg";
+import metMuseumLogo from "./assets/met-museum-logo.png";
+import "./assets/style.css";
 
 interface IFormValues {
   username: string;
@@ -43,7 +51,7 @@ interface IUserData {
   exhibitions: IExhibition[];
   favorites: IFavorite[];
   addArtwork: (artwork: IArtwork) => void;
-  removeArtwork: (id: number) => void;
+  removeArtwork: (id: string) => void;
 }
 
 const userData: IUserData = {
@@ -55,10 +63,8 @@ const userData: IUserData = {
   addArtwork: (artwork: IArtwork) => {
     userData.artworks.push(artwork);
   },
-  removeArtwork: (id: number) => {
-    userData.artworks = userData.artworks.filter(
-      (art) => art.id !== id.toString()
-    );
+  removeArtwork: (id: string) => {
+    userData.artworks = userData.artworks.filter((art) => art.id !== id);
   },
 };
 
@@ -86,68 +92,87 @@ const App: React.FC = () => {
   return (
     <div className="App">
       <header className="App-header">
-        {loggedIn ? (
-          <>
-            <h2>Welcome, User!</h2>
-            <button onClick={handleLogout}>Logout</button>
-          </>
-        ) : (
-          <>
-            <Formik
-              initialValues={{
-                username: "",
-                password: "",
-                fields: [],
-              }}
-              validationSchema={loginSchema}
-              onSubmit={handleLoginSubmit}
-            >
-              {() => (
-                <Form>
-                  <h1>Login</h1>
-                  <div>
-                    <label htmlFor="username">Username</label>
-                    <Field type="text" id="username" name="username" />
-                    <ErrorMessage name="username" component="div" />
-                  </div>
-                  <div>
-                    <label htmlFor="password">Password</label>
-                    <Field type="password" id="password" name="password" />
-                    <ErrorMessage name="password" component="div" />
-                  </div>
-                  <button type="submit">Login</button>
-                </Form>
-              )}
-            </Formik>
+        <div className="header-content">
+          <img src={metMuseumLogo} alt="Met Museum Logo" className="met-logo" />
+          <h1>The Metropolitan Museum of Art Collection</h1>
+        </div>
+        <div className="content-wrapper">
+          <img src={museumImage} alt="Museum" className="museum-image" />
+          <div className="content-left">
+            <div className="login-registration">
+              {loggedIn ? (
+                <>
+                  <h2>Welcome, User!</h2>
+                  <button onClick={handleLogout}>Logout</button>
+                </>
+              ) : (
+                <>
+                  <Formik
+                    initialValues={{
+                      username: "",
+                      password: "",
+                      fields: [],
+                    }}
+                    validationSchema={loginSchema}
+                    onSubmit={handleLoginSubmit}
+                  >
+                    {() => (
+                      <Form>
+                        <h1>Login</h1>
+                        <div>
+                          <label htmlFor="username">Username</label>
+                          <Field type="text" id="username" name="username" />
+                          <ErrorMessage name="username" component="div" />
+                        </div>
+                        <div>
+                          <label htmlFor="password">Password</label>
+                          <Field
+                            type="password"
+                            id="password"
+                            name="password"
+                          />
+                          <ErrorMessage name="password" component="div" />
+                        </div>
+                        <button type="submit">Login</button>
+                      </Form>
+                    )}
+                  </Formik>
 
-            <Formik
-              initialValues={{
-                username: "",
-                password: "",
-                fields: [],
-              }}
-              validationSchema={registrationSchema}
-              onSubmit={handleRegistrationSubmit}
-            >
-              {() => (
-                <Form>
-                  <h1>Register</h1>
-                  <div>
-                    <label htmlFor="username">Username</label>
-                    <Field type="text" id="username" name="username" />
-                    <ErrorMessage name="username" component="div" />
-                  </div>
-                  <div>
-                    <label htmlFor="password">Password</label>
-                    <Field type="password" id="password" name="password" />
-                    <ErrorMessage name="password" component="div" />
-                  </div>
-                  <button type="submit">Register</button>
-                </Form>
+                  <Formik
+                    initialValues={{
+                      username: "",
+                      password: "",
+                      fields: [],
+                    }}
+                    validationSchema={registrationSchema}
+                    onSubmit={handleRegistrationSubmit}
+                  >
+                    {() => (
+                      <Form>
+                        <h1>Register</h1>
+                        <div>
+                          <label htmlFor="username">Username</label>
+                          <Field type="text" id="username" name="username" />
+                          <ErrorMessage name="username" component="div" />
+                        </div>
+                        <div>
+                          <label htmlFor="password">Password</label>
+                          <Field
+                            type="password"
+                            id="password"
+                            name="password"
+                          />
+                          <ErrorMessage name="password" component="div" />
+                        </div>
+                        <button type="submit">Register</button>
+                      </Form>
+                    )}
+                  </Formik>
+                </>
               )}
-            </Formik>
-          </>
-        )}
+            </div>
+          </div>
+        </div>
       </header>
       <ErrorBoundary>
         <MuseumView />
@@ -161,7 +186,15 @@ const AppWrapper: React.FC = () => (
     <Provider store={store}>
       <AuthProvider>
         <ApiContext.Provider value={userData}>
-          <App />
+          <Router>
+            <Routes>
+              <Route path="/" element={<App />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Router>
         </ApiContext.Provider>
       </AuthProvider>
     </Provider>

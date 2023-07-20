@@ -1,18 +1,14 @@
 import React, { createContext, useMemo, useCallback, ReactNode } from "react";
-import { IArtwork, IExhibition, IFavorite } from "features/types";
+import { IArtwork } from "./types";
 
 interface IApiContextType {
   artworks: IArtwork[];
-  exhibitions: IExhibition[];
-  favorites: IFavorite[];
   addArtwork: (artwork: IArtwork) => void;
-  removeArtwork: (id: number) => void;
+  removeArtwork: (id: string) => void;
 }
 
 const ApiContext = createContext<IApiContextType>({
   artworks: [],
-  exhibitions: [],
-  favorites: [],
   addArtwork: () => {},
   removeArtwork: () => {},
 });
@@ -28,7 +24,7 @@ const ApiProvider: React.FC<IApiProviderProps> = ({ children }) => {
     setArtworks((prevArtworks) => [...prevArtworks, artwork]);
   }, []);
 
-  const removeArtwork = useCallback((id: number | string) => {
+  const removeArtwork = useCallback((id: string) => {
     setArtworks((prevArtworks) =>
       prevArtworks.filter((artwork) => artwork.id !== id)
     );
@@ -37,8 +33,6 @@ const ApiProvider: React.FC<IApiProviderProps> = ({ children }) => {
   const contextValue = useMemo(
     () => ({
       artworks,
-      exhibitions: [],
-      favorites: [],
       addArtwork,
       removeArtwork,
     }),
