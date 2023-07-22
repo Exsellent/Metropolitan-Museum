@@ -1,3 +1,5 @@
+// eslint-disable-next-line prettier/prettier
+export { };
 const path = require("path");
 
 module.exports = {

@@ -1,16 +1,24 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Form, Button, Image, Table } from "react-bootstrap";
-import { useAuth } from "../hooks/useAuth";
-import ApiContext from "../ApiContext/ApiContext";
-import { IArtwork } from "features/types";
-import { IApiResponse, fetchMuseumObjects, fetchMuseumInfo } from "./api";
-import "./museum-view.css";
+import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
+import PropTypes from "prop-types";
+interface IMuseumObject {
+  objectID: number;
+  title: string;
+  artistDisplayName: string;
+}
+
+interface IApiResponse {
+  artistDisplayName: React.ReactNode;
+  primaryImageSmall: string;
+  accessionYear: React.ReactNode;
+  culture: React.ReactNode;
+  period: React.ReactNode;
+}
 
 const MuseumView: React.FC = () => {
-  const { loggedIn } = useAuth();
-  const apiContext = useContext(ApiContext);
   const [response, setResponse] = useState<IApiResponse | null>(null);
-  const [museumObjects, setMuseumObjects] = useState<number[]>([]);
+  const [museumObjects, setMuseumObjects] = useState<IMuseumObject[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
 
@@ -18,9 +26,15 @@ const MuseumView: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      const keyword = "cats"; // Replace with user input or any keyword you want to use
+      const keyword = "art"; // Placeholder for user input or any keyword you want to use
       const objectIDs = await fetchMuseumObjects(keyword);
-      setMuseumObjects(objectIDs);
+      // Convert objectIDs to an array of IMuseumObject with placeholder data
+      const objects: IMuseumObject[] = objectIDs.map((id) => ({
+        objectID: id,
+        title: `Artwork ${id}`,
+        artistDisplayName: "Artist Name",
+      }));
+      setMuseumObjects(objects);
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
@@ -37,21 +51,7 @@ const MuseumView: React.FC = () => {
   }, [fetchMuseumObjectsList]);
 
   const handleUserInput = async () => {
-    setLoading(true);
-    setError("");
-    try {
-      const keyword = "cats"; // Replace with user input or any keyword you want to use
-      const objectIDs = await fetchMuseumObjects(keyword);
-      setMuseumObjects(objectIDs);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unknown error occurred");
-      }
-    } finally {
-      setLoading(false);
-    }
+    // Handle user input here
   };
 
   const updateMuseumInfo = async () => {
@@ -59,10 +59,10 @@ const MuseumView: React.FC = () => {
     setLoading(true);
     setError("");
     try {
-      const [firstObjectID] = museumObjects;
-      if (firstObjectID) {
-        const museumInfo = await fetchMuseumInfo(firstObjectID);
-        setResponse(museumInfo);
+      const [firstObject] = museumObjects;
+      if (firstObject) {
+        const artworkData = await fetchMuseumInfo(firstObject.objectID);
+        setResponse(artworkData);
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -75,19 +75,12 @@ const MuseumView: React.FC = () => {
     }
   };
 
-  const handleAddArtwork = () => {
-    if (loggedIn && apiContext) {
-      const artwork: IArtwork = {
-        id: "1",
-        email: "example@example.com",
-        name: "",
-      };
-      apiContext.addArtwork(artwork);
-    }
-  };
+  const handleAddArtwork = () => {};
 
-  const museumObjectList = museumObjects.map((objectID) => (
-    <li key={objectID}>{objectID}</li>
+  const museumObjectList = museumObjects.map((object) => (
+    <li key={object.objectID}>
+      {object.title} - {object.artistDisplayName}
+    </li>
   ));
 
   return (
@@ -132,6 +125,10 @@ const MuseumView: React.FC = () => {
       <Button onClick={handleAddArtwork}>Add Artwork</Button>
     </>
   );
+};
+
+MuseumView.propTypes = {
+  title: PropTypes.string,
 };
 
 export default MuseumView;

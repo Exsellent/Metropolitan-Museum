@@ -11,11 +11,11 @@ export interface IApiResponse {
   accessionYear: string;
 }
 
-// interface IMuseumArtwork {
-//   objectID: number;
-//   title: string;
-//   artistDisplayName: string;
-// }
+export interface IMuseumArtwork {
+  objectID: number;
+  title: string;
+  artistDisplayName: string;
+}
 
 export const fetchMuseumObjects = async (
   keyword: string

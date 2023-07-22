@@ -3,22 +3,22 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Provider } from "react-redux";
-import store from "redux/store";
-import { AuthProvider, useAuth } from "hooks/useAuth";
-import ApiContext from "ApiContext/ApiContext";
-import ErrorBoundary from "ErrorBoundary/ErrorBoundary";
-import MuseumView from "components/MuseumView";
-import FavoritesPage from "components/FavoritesPage";
-import SearchPage from "components/SearchPage";
-import LoginPage from "components/LoginPage";
-import NotFoundPage from "components/NotFoundPage";
-import { IArtwork } from "features/artworksSlice";
-import { IExhibition } from "features/exhibitionsSlice";
-import { IFavorite } from "features/favoritesSlice";
-
+import store from "./redux/store";
+import { AuthProvider, useAuth } from "./hooks/useAuth";
+import ApiContext from "./ApiContext/ApiContext";
+import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
+import MuseumView from "./components/MuseumView";
+import FavoritesPage from "./components/FavoritesPage";
+import SearchPage from "./components/SearchPage";
+import LoginPage from "./components/LoginPage";
+import NotFoundPage from "./components/NotFoundPage";
+import { IArtwork } from "./features/artworksSlice";
+import { IExhibition } from "./features/exhibitionsSlice";
+import { IFavorite } from "./features/favoritesSlice";
 import museumImage from "./assets/museum-image.jpg";
 import metMuseumLogo from "./assets/met-museum-logo.png";
 import "./assets/style.css";
+import UsersList from "./redux/UsersList";
 
 interface IFormValues {
   username: string;
@@ -176,6 +176,7 @@ const App: React.FC = () => {
       </header>
       <ErrorBoundary>
         <MuseumView />
+        <UsersList />
       </ErrorBoundary>
     </div>
   );
