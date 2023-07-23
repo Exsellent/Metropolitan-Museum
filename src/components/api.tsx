@@ -1,22 +1,20 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { IApiResponse } from "./apiTypes";
 import axios from "axios";
 
 const API_BASE_URL = "https://collectionapi.metmuseum.org/public/collection/v1";
 
-export interface IApiResponse {
-  objectIDs: number[];
-  primaryImageSmall: string;
-  artistDisplayName: string;
-  culture: string;
-  period: string;
-  accessionYear: string;
-}
-
-export interface IMuseumArtwork {
-  objectID: number;
-  title: string;
-  artistDisplayName: string;
-}
-
+export const api = createApi({
+  baseQuery: fetchBaseQuery({ baseUrl: API_BASE_URL }),
+  endpoints: (builder) => ({
+    fetchMuseumObjects: builder.query<number[], string>({
+      query: (keyword) => `search?q=${keyword}`,
+    }),
+    fetchMuseumInfo: builder.query<IApiResponse, number>({
+      query: (id) => `objects/${id}`,
+    }),
+  }),
+});
 export const fetchMuseumObjects = async (
   keyword: string
 ): Promise<number[]> => {
@@ -54,3 +52,4 @@ export const fetchMuseumInfo = async (id: number): Promise<IApiResponse> => {
     throw new Error("Failed to fetch museum info");
   }
 };
+export const { useFetchMuseumObjectsQuery, useFetchMuseumInfoQuery } = api;
