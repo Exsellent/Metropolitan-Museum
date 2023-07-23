@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Form, Button, Image, Table } from "react-bootstrap";
 import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
 interface IMuseumObject {
   objectID: number;
   title: string;
@@ -127,8 +127,8 @@ const MuseumView: React.FC = () => {
   );
 };
 
-MuseumView.propTypes = {
-  title: PropTypes.string,
-};
+// MuseumView.propTypes = {
+//   title: PropTypes.string,
+// };
 
 export default MuseumView;

@@ -4,14 +4,14 @@ import { selectExhibitions } from "features/exhibitionsSlice";
 import { selectFavorites } from "features/favoritesSlice";
 import ApiContext from "./ApiContext";
 import { IArtwork } from "features/types";
-import { RootState } from "../redux/store";
+import type { RootState } from "../redux/store"; // Use 'import type' to fix the import
 
 interface IApiProviderProps {
   children: ReactNode;
 }
 
 const ApiProvider: React.FC<IApiProviderProps> = ({ children }) => {
-  const artworks = useSelector((state: RootState) => state.artworks);
+  const artworks = useSelector((state: RootState) => state.artworks); // Use RootState in the useSelector function
   const exhibitions = useSelector(selectExhibitions);
   const favorites = useSelector(selectFavorites);
   const dispatch = useDispatch();

@@ -24,6 +24,12 @@ export const fetchMuseumObjects = async (
     const response = await axios.get<IApiResponse>(
       `${API_BASE_URL}/search?q=${keyword}`
     );
+
+    // Проверка статуса ответа и обработка ошибки, если статус не 200
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch museum objects");
+    }
+
     const objectIDs: number[] = response.data.objectIDs;
     return objectIDs;
   } catch (error) {
@@ -36,6 +42,12 @@ export const fetchMuseumInfo = async (id: number): Promise<IApiResponse> => {
     const response = await axios.get<IApiResponse>(
       `${API_BASE_URL}/objects/${id}`
     );
+
+    // Проверка статуса ответа и обработка ошибки, если статус не 200
+    if (response.status !== 200) {
+      throw new Error("Failed to fetch museum info");
+    }
+
     const museumInfo: IApiResponse = response.data;
     return museumInfo;
   } catch (error) {

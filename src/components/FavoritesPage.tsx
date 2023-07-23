@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectFavorites, removeFavorite } from "../features/favoritesSlice"; // Correct the import path to include "../" before "features/favoritesSlice"
+import { selectFavorites, removeFavorite } from "../features/favoritesSlice";
 
 const FavoritesPage: React.FC = () => {
   const favorites = useSelector(selectFavorites);

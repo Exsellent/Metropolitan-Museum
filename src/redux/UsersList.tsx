@@ -1,8 +1,8 @@
 import React from "react";
-import { useGetUsersQuery } from "./RTKapi"; // Import the useGetUsersQuery function
+import { useFetchMuseumObjectsQuery } from "./RTKapi";
 
 const UsersList = () => {
-  const { data, error, isLoading } = useGetUsersQuery();
+  const { data, error, isLoading } = useFetchMuseumObjectsQuery("art");
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -22,8 +22,8 @@ const UsersList = () => {
     <div>
       <h2>Users List</h2>
       <ul>
-        {data?.results.map((user) => (
-          <li key={user.id}>{user.name}</li>
+        {data?.map((objectId) => (
+          <li key={objectId}>{objectId}</li>
         ))}
       </ul>
     </div>
