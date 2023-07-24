@@ -1,24 +1,18 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Provider } from "react-redux";
-import store from "redux/store";
-import { AuthProvider, useAuth } from "hooks/useAuth";
-import ApiContext from "ApiContext/ApiContext";
-import ErrorBoundary from "ErrorBoundary/ErrorBoundary";
-import MuseumView from "components/MuseumView";
-import FavoritesPage from "components/FavoritesPage";
-import SearchPage from "components/SearchPage";
-import LoginPage from "components/LoginPage";
-import NotFoundPage from "components/NotFoundPage";
+import store from "./redux/store";
+import { AuthProvider, useAuth } from "./hooks/useAuth";
+import ApiContext from "./ApiContext/ApiContext";
+import ErrorBoundary from "./ErrorBoundary/ErrorBoundary";
+import MuseumView from "./components/MuseumView";
+import UsersList from "./redux/UsersList";
 import { IArtwork } from "features/artworksSlice";
 import { IExhibition } from "features/exhibitionsSlice";
 import { IFavorite } from "features/favoritesSlice";
-
-import museumImage from "./assets/museum-image.jpg";
 import metMuseumLogo from "./assets/met-museum-logo.png";
-import "./assets/style.css";
+import museumImage from "./assets/museum-image.jpg";
 
 interface IFormValues {
   username: string;
@@ -176,6 +170,7 @@ const App: React.FC = () => {
       </header>
       <ErrorBoundary>
         <MuseumView />
+        <UsersList />
       </ErrorBoundary>
     </div>
   );
@@ -186,15 +181,7 @@ const AppWrapper: React.FC = () => (
     <Provider store={store}>
       <AuthProvider>
         <ApiContext.Provider value={userData}>
-          <Router>
-            <Routes>
-              <Route path="/" element={<App />} />
-              <Route path="/favorites" element={<FavoritesPage />} />
-              <Route path="/search" element={<SearchPage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Router>
+          <App />
         </ApiContext.Provider>
       </AuthProvider>
     </Provider>

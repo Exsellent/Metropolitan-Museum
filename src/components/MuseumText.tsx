@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Form, Button, Image } from "react-bootstrap";
-import { fetchMuseumInfo, fetchMuseumObjects } from "./api";
+import { Form, Button, Image, Table } from "react-bootstrap";
+import { fetchMuseumObjects, fetchMuseumInfo } from "./api";
 
 interface IMuseumArtwork {
   objectID: number;
@@ -16,6 +16,14 @@ interface IApiResponse {
   accessionYear: string;
 }
 
+const convertToMuseumArtwork = (data: IApiResponse[]): IMuseumArtwork[] => {
+  return data.map((item) => ({
+    objectID: Math.floor(Math.random() * 10000), // Just a placeholder objectID since the API doesn't provide it
+    title: item.artistDisplayName,
+    artistDisplayName: item.artistDisplayName,
+  }));
+};
+
 const MuseumText: React.FC = () => {
   const [response, setResponse] = useState<IApiResponse | null>(null);
   const [searchKeyword, setSearchKeyword] = useState<string>("");
@@ -30,7 +38,6 @@ const MuseumText: React.FC = () => {
     try {
       const museumInfo = await fetchMuseumInfo(id);
       setResponse(museumInfo);
-      setSearchKeyword("");
       setError("");
     } catch (error) {
       setError((error as Error).message);
@@ -43,7 +50,7 @@ const MuseumText: React.FC = () => {
       const museumObjects = await Promise.all(
         objectIDs.map((id) => fetchMuseumInfo(id))
       );
-      setMuseumObjects(museumObjects as unknown as IMuseumArtwork[]);
+      setMuseumObjects(convertToMuseumArtwork(museumObjects));
       setError("");
     } catch (error) {
       setError((error as Error).message);
@@ -53,10 +60,10 @@ const MuseumText: React.FC = () => {
   const handleUserInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const keyword = e.target.value;
     setSearchKeyword(keyword);
-    handleApiResponse(parseInt(keyword, 10));
   };
 
-  const submitUserInput = () => {
+  const submitUserInput = (e: React.FormEvent) => {
+    e.preventDefault();
     handleApiResponse(parseInt(searchKeyword, 10));
   };
 
@@ -83,6 +90,7 @@ const MuseumText: React.FC = () => {
         <Form.Control
           type="text"
           placeholder="Enter a keyword"
+          value={searchKeyword}
           onChange={handleUserInput}
         />
         <Button variant="primary" type="submit">

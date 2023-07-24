@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "redux/reduxToolkitImports";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface IUser {
   id: number;
@@ -7,7 +7,7 @@ interface IUser {
   password: string;
 }
 
-interface IAuthState {
+export interface IAuthState {
   loggedIn: boolean;
   user: IUser | null;
 }

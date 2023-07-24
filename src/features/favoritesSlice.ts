@@ -4,7 +4,7 @@ export interface IFavorite {
   id: string;
 }
 
-type FavoritesState = IFavorite[];
+export type FavoritesState = IFavorite[];
 
 const favoritesSlice = createSlice({
   name: "favorites",

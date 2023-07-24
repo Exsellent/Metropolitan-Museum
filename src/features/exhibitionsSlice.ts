@@ -8,7 +8,7 @@ export interface IExhibition {
   date: string;
 }
 
-type ExhibitionsState = IExhibition[];
+export type ExhibitionsState = IExhibition[];
 
 const exhibitionsSlice = createSlice({
   name: "exhibitions",

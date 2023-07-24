@@ -1,7 +1,7 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/index.js",
+  entry: "./src/index.tsx",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.js",
@@ -24,6 +24,13 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-react", "@babel/preset-typescript"],
+            plugins: [
+              "@babel/plugin-proposal-class-properties",
+              // If you still face issues, you can add "@babel/plugin-proposal-private-methods" here, but it should not be needed for React 18.
+            ],
+          },
         },
       },
       {

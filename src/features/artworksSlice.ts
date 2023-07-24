@@ -6,7 +6,7 @@ export interface IArtwork {
   email: string;
 }
 
-type ArtworksState = IArtwork[];
+export type ArtworksState = IArtwork[];
 
 const artworksSlice = createSlice({
   name: "artworks",
