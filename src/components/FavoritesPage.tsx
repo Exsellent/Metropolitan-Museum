@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectFavorites, removeFavorite } from "../features/favoritesSlice";
+import { removeFromLocalStorage } from "services/localStorage";
 
 const FavoritesPage: React.FC = () => {
   const favorites = useSelector(selectFavorites);
@@ -8,6 +9,7 @@ const FavoritesPage: React.FC = () => {
 
   const handleRemoveFavorite = (favoriteId: string) => {
     dispatch(removeFavorite(favoriteId));
+    removeFromLocalStorage("favorites"); // Удаляем избранное из LocalStorage
   };
 
   return (
