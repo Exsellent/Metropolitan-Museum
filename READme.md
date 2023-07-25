@@ -17,7 +17,7 @@
 
 - применение предохранителя (src\ErrorBoundary\ErrorBoundary.tsx https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/ErrorBoundary) ☑️
 
-- написан кастомный хук [src\hooks\useAuth.tsx https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/ErrorBoundary) ☑️
+- написан кастомный хук [src\hooks\useAuth.tsx https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/hooks) ☑️
 
 - используется PropTypes (src\components\MuseumView.tsx https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/components/MuseumView.tsx) ☑️
 
