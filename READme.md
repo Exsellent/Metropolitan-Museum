@@ -35,5 +35,9 @@
 - есть кастомная [мидлвары](src\middleware\authMiddleware.tsx, src\middleware\loggerMiddleware.tsx) ☑️
 
 - используется [RTK Query](src\redux\RTKapi.ts., src\redux\UsersList.tsx) ☑️
+2 уровень (необязательный)
+  Использование TypeScript
+  Настроен CI/CD
+  
 
-
+2 уровень (необязательный)
