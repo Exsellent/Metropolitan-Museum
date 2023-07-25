@@ -2,6 +2,7 @@
 
 Учебный проект выполнен в рамках React-интенсива компании Aston.  
 Проект создан для просмотра и доступа к данным о более чем 470 000 произведений искусстваThe Metropolitan Museum of Art Collection API
+
 Для хранения учетных записей пользователей, их Избранного и Истории поиска, используем LocalStorage https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/services ☑️
 
 ## React
