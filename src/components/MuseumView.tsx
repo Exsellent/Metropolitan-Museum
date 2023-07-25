@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Form, Button } from "react-bootstrap";
 import { fetchMuseumObjects } from "./api";
+import PropTypes from "prop-types";
 
 interface IMuseumObject {
   objectID: number;
@@ -74,6 +75,10 @@ const MuseumView: React.FC = () => {
       <ul>{museumObjectList}</ul>
     </>
   );
+};
+
+MuseumView.propTypes = {
+  loading: PropTypes.bool.isRequired,
 };
 
 export default MuseumView;
