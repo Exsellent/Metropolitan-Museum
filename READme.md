@@ -2,6 +2,7 @@
 
 Учебный проект выполнен в рамках React-интенсива компании Aston.  
 Проект создан для просмотра и доступа к данным о более чем 470 000 произведений искусстваThe Metropolitan Museum of Art Collection API
+Для хранения учетных записей пользователей, их Избранного и Истории поиска, используем LocalStorage https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/services ☑️
 
 ## React
 
@@ -35,6 +36,7 @@
 - есть кастомная [мидлвары](src\middleware\authMiddleware.tsx, src\middleware\loggerMiddleware.tsx https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/middleware)  ☑️
 
 - используется [RTK Query](src\redux\RTKapi.ts., src\redux\UsersList.tsx https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/redux) ☑️
+- Используется Transforming Responses https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/redux/RTKapi.ts ☑️
 
 2 уровень (необязательный)
   - Использование TypeScript  ☑️
