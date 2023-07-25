@@ -19,7 +19,7 @@
 
 - написан кастомный хук [src\hooks\useAuth.tsx https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/ErrorBoundary) ☑️
 
-- используется PropTypes (src\components\MuseumView.tsx) ☑️
+- используется PropTypes (src\components\MuseumView.tsx https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/components/MuseumView.tsx) ☑️
 
 - поиск не должен триггерить много запросов к серверу. Debounce (src\hooks\useDebounce.ts) ☑️
 
