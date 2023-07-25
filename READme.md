@@ -7,23 +7,23 @@
 
 - функциональные компоненты c хуками в приоритете над классовыми. ☑️
 
-- разделение компонентов на [умные](src\components\MuseumView.tsx, src\components\MuseumText.tsx) - и [глупые](src\components\Spinner.tsx) ☑️
+- разделение компонентов на [умные](src\components\MuseumView.tsx, src\components\MuseumText.tsx) - и [глупые] (src\components\Spinner.tsx) ☑️
 
-- рендеринг списков [компонент рендеринга списка](src\components\MuseumView.tsx) ☑️
+- рендеринг списков (src\components\MuseumView.tsx) ☑️
 
 - реализована [формs](src\Forms\LoginForm.tsx., src\Forms\RegistrationForm.tsx) ☑️
 
 - применение Контекст API [src\ApiContext) ☑️
 
-- [применение](src/App.tsx) [предохранителя](src\ErrorBoundary\ErrorBoundary.tsx) ☑️
+- применение предохранителя (src\ErrorBoundary\ErrorBoundary.tsx) ☑️
 
 - написан кастомный хук [src\hooks\useAuth.tsx) ☑️
 
 - используется PropTypes (src\components\MuseumView.tsx) ☑️
 
-- поиск не должен триггерить много запросов к серверу. [useDebounce](src\hooks\useDebounce.ts) ☑️
+- поиск не должен триггерить много запросов к серверу. Debounce (src\hooks\useDebounce.ts) ☑️
 
-- используется [lazy + Suspense](src\components\Routing.tsx) ☑️
+- используется lazy + Suspense(src\components\Routing.tsx) ☑️
 
 
 ## Redux
