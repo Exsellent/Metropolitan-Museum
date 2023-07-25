@@ -37,7 +37,7 @@
 - используется [RTK Query](src\redux\RTKapi.ts., src\redux\UsersList.tsx https://github.com/Exsellent/Metropolitan-Museum/tree/master/src/redux) ☑️
 
 2 уровень (необязательный)
-  - Использование TypeScript
-  - Настроен CI/CD https://github.com/Exsellent/Metropolitan-Museum/tree/master/.github/workflows
+  - Использование TypeScript  ☑️
+  - Настроен CI/CD https://github.com/Exsellent/Metropolitan-Museum/tree/master/.github/workflows  ☑️
   
 
