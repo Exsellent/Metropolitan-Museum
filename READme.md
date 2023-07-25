@@ -7,7 +7,7 @@
 
 - функциональные компоненты c хуками в приоритете над классовыми. ☑️
 
-- разделение компонентов на [умные](src\components\MuseumView.tsx, src\components\MuseumText.tsx) - и [глупые] (src\components\Spinner.tsx) ☑️
+- разделение компонентов на [умные](src\components\MuseumView.tsx https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/components/MuseumView.tsx  src\components\MuseumText.tsx https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/components/MuseumText.tsx) - и [глупые] (src\components\Spinner.tsx https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/components/Spinner.tsx) ☑️
 
 - рендеринг списков (src\components\MuseumView.tsx) ☑️
 
