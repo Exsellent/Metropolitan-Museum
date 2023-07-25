@@ -21,9 +21,9 @@
 
 - используется PropTypes (src\components\MuseumView.tsx https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/components/MuseumView.tsx) ☑️
 
-- поиск не должен триггерить много запросов к серверу. Debounce (src\hooks\useDebounce.ts) ☑️
+- поиск не должен триггерить много запросов к серверу. Debounce (src\hooks\useDebounce.ts https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/hooks/useDebounce.ts) ☑️
 
-- используется lazy + Suspense(src\components\Routing.tsx) ☑️
+- используется lazy + Suspense(src\components\Routing.tsx https://github.com/Exsellent/Metropolitan-Museum/blob/master/src/components/Routing.tsx) ☑️
 
 
 ## Redux
